@@ -15,14 +15,15 @@
  */
 package com.example.android.quakereport;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.widget.Adapter;
-import android.widget.ArrayAdapter;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
-import org.json.JSONObject;
-
+import java.net.URI;
 import java.util.ArrayList;
 
 public class EarthquakeActivity extends AppCompatActivity {
@@ -34,23 +35,31 @@ public class EarthquakeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.earthquake_activity);
 
-        JSONObject earthquakeData = new JSONObject();
-
         // Create a fake list of earthquake locations.
-        ArrayList<Earthquake> earthquakes = QueryUtils.extractEarthquakes();
+        final ArrayList<Earthquake> earthquakes = QueryUtils.extractEarthquakes();
 
 
         // Find a reference to the {@link ListView} in the layout
-        ListView earthquakeListView = (ListView) findViewById(R.id.list);
+        final ListView earthquakeListView = (ListView) findViewById(R.id.list);
 
         // Create a new {@link ArrayAdapter} of earth   quakes
-        EarthquakeAdapter adapter = new EarthquakeAdapter(
+        final EarthquakeAdapter adapter = new EarthquakeAdapter(
                 this, earthquakes);
 
         // Set the adapter on the {@link ListView}
         // so the list can be populated in the user interface
         assert earthquakeListView != null;
         earthquakeListView.setAdapter(adapter);
+        earthquakeListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                  Earthquake currentEarthquake = adapter.getItem(position);
+
+                   Uri uri1 =  Uri.parse(currentEarthquake.getUri());
+                    Intent browserIntent = new Intent(Intent.ACTION_VIEW,uri1);
+                    startActivity(browserIntent);
+            }
+        });
 
     }
 }
